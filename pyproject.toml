@@ -50,7 +50,7 @@ Homepage = "https://github.com/guitrading/quantconnect-lean-tearsheet-generator"
 Documentation = "https://github.com/guitrading/quantconnect-lean-tearsheet-generator#readme"
 
 [tool.black]
-line-length = 100
+line-length = 79
 target-version = ['py38', 'py39', 'py310', 'py311', 'py312']
 
 [tool.pytest.ini_options]

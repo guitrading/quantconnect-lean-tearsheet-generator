@@ -56,7 +56,9 @@ def test_pdf_tearsheet_generation(generator):
             assert output_file.stat().st_size > 0
         except Exception as e:
             # PDF generation may fail without kaleido installed
-            pytest.skip(f"PDF generation failed (kaleido may not be installed): {e}")
+            pytest.skip(
+                f"PDF generation failed (kaleido may not be installed): {e}"
+            )
 
 
 def test_html_metrics_table_formatting(generator):

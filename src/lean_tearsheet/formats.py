@@ -46,7 +46,13 @@ class HTMLTearsheet:
 
         # Create figure
         fig = self._create_figure(
-            equity, returns, strat_metrics, benchmark_returns, bench_metrics, start_date, end_date
+            equity,
+            returns,
+            strat_metrics,
+            benchmark_returns,
+            bench_metrics,
+            start_date,
+            end_date,
         )
 
         # Save
@@ -57,7 +63,14 @@ class HTMLTearsheet:
         print(f"  Open in browser: file://{Path(output_file).absolute()}")
 
     def _create_figure(
-        self, equity, returns, strat_metrics, benchmark_returns, bench_metrics, start_date, end_date
+        self,
+        equity,
+        returns,
+        strat_metrics,
+        benchmark_returns,
+        bench_metrics,
+        start_date,
+        end_date,
     ):
         """Create plotly figure with all charts."""
 
@@ -118,9 +131,16 @@ class HTMLTearsheet:
         }
 
         strat_table = go.Table(
-            header=dict(values=["Metric", "Value"], fill_color="paleturquoise", align="left"),
+            header=dict(
+                values=["Metric", "Value"],
+                fill_color="paleturquoise",
+                align="left",
+            ),
             cells=dict(
-                values=[list(strat_display.keys()), list(strat_display.values())],
+                values=[
+                    list(strat_display.keys()),
+                    list(strat_display.values()),
+                ],
                 fill_color="lavender",
                 align="left",
             ),
@@ -130,7 +150,9 @@ class HTMLTearsheet:
         if bench_metrics:
             bench_display = {
                 "Total Return": f"{bench_metrics['Total Return'] * 100:.2f}%",
-                "Annual Return": f"{bench_metrics['Annual Return'] * 100:.2f}%",
+                "Annual Return": (
+                    f"{bench_metrics['Annual Return'] * 100:.2f}%"
+                ),
                 "Volatility": f"{bench_metrics['Volatility'] * 100:.2f}%",
                 "Sharpe Ratio": f"{bench_metrics['Sharpe Ratio']:.2f}",
                 "Sortino Ratio": f"{bench_metrics['Sortino Ratio']:.2f}",
@@ -141,9 +163,16 @@ class HTMLTearsheet:
             }
 
             bench_table = go.Table(
-                header=dict(values=["Metric", "Value"], fill_color="lightblue", align="left"),
+                header=dict(
+                    values=["Metric", "Value"],
+                    fill_color="lightblue",
+                    align="left",
+                ),
                 cells=dict(
-                    values=[list(bench_display.keys()), list(bench_display.values())],
+                    values=[
+                        list(bench_display.keys()),
+                        list(bench_display.values()),
+                    ],
                     fill_color="aliceblue",
                     align="left",
                 ),
@@ -252,7 +281,9 @@ class HTMLTearsheet:
         )
 
         if benchmark_returns is not None:
-            bench_rolling_sharpe = self.generator.get_rolling_sharpe(benchmark_returns)
+            bench_rolling_sharpe = self.generator.get_rolling_sharpe(
+                benchmark_returns
+            )
             bench_avg_sharpe = bench_rolling_sharpe.mean()
 
             fig.add_trace(
@@ -285,7 +316,10 @@ class HTMLTearsheet:
     def _update_layout(self, fig, start_date, end_date):
         """Update figure layout with titles and legend."""
         fig.update_layout(
-            title_text=f"LEAN Strategy Tearsheet ({start_date[:10]} to {end_date[:10]})",
+            title_text=(
+                f"LEAN Strategy Tearsheet "
+                f"({start_date[:10]} to {end_date[:10]})"
+            ),
             height=1400,
             showlegend=True,
             legend=dict(
@@ -375,7 +409,13 @@ class PDFTearsheet:
         end_date = config.get("endDate", "Unknown")
 
         fig = html_generator._create_figure(
-            equity, returns, strat_metrics, benchmark_returns, bench_metrics, start_date, end_date
+            equity,
+            returns,
+            strat_metrics,
+            benchmark_returns,
+            bench_metrics,
+            start_date,
+            end_date,
         )
 
         # Export to PDF

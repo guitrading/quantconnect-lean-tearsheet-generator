@@ -47,7 +47,12 @@ def test_cli_html_generation(mock_backtest_dir, tmp_path):
     """Test HTML generation via CLI."""
     output_file = tmp_path / "test_output.html"
 
-    sys.argv = ["lean-tearsheet", str(mock_backtest_dir), "-o", str(output_file)]
+    sys.argv = [
+        "lean-tearsheet",
+        str(mock_backtest_dir),
+        "-o",
+        str(output_file),
+    ]
     main()
 
     assert output_file.exists()
@@ -58,7 +63,12 @@ def test_cli_format_auto_detection(mock_backtest_dir, tmp_path):
     """Test automatic format detection from filename."""
     output_file = tmp_path / "test_output.html"
 
-    sys.argv = ["lean-tearsheet", str(mock_backtest_dir), "-o", str(output_file)]
+    sys.argv = [
+        "lean-tearsheet",
+        str(mock_backtest_dir),
+        "-o",
+        str(output_file),
+    ]
     main()
 
     assert output_file.exists()

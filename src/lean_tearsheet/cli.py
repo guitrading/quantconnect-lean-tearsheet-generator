@@ -11,7 +11,10 @@ from .generator import TearsheetGenerator
 def main():
     """Main CLI entry point."""
     parser = argparse.ArgumentParser(
-        description="Generate professional tearsheets from QuantConnect LEAN backtest results",
+        description=(
+            "Generate professional tearsheets from QuantConnect "
+            "LEAN backtest results"
+        ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
@@ -28,7 +31,9 @@ Examples:
     )
 
     parser.add_argument(
-        "backtest_dir", type=str, help="Path to LEAN backtest directory containing JSON results"
+        "backtest_dir",
+        type=str,
+        help="Path to LEAN backtest directory containing JSON results",
     )
 
     parser.add_argument(
@@ -49,17 +54,25 @@ Examples:
     )
 
     parser.add_argument(
-        "-b", "--benchmark", type=str, help="Path to benchmark data file (e.g., btcusdt_trade.zip)"
+        "-b",
+        "--benchmark",
+        type=str,
+        help="Path to benchmark data file (e.g., btcusdt_trade.zip)",
     )
 
-    parser.add_argument("-v", "--version", action="version", version="%(prog)s 0.1.0")
+    parser.add_argument(
+        "-v", "--version", action="version", version="%(prog)s 0.1.0"
+    )
 
     args = parser.parse_args()
 
     # Validate backtest directory
     backtest_path = Path(args.backtest_dir)
     if not backtest_path.exists():
-        print(f"Error: Backtest directory not found: {args.backtest_dir}", file=sys.stderr)
+        print(
+            f"Error: Backtest directory not found: {args.backtest_dir}",
+            file=sys.stderr,
+        )
         sys.exit(1)
 
     if not backtest_path.is_dir():
@@ -70,7 +83,10 @@ Examples:
     if args.benchmark:
         benchmark_path = Path(args.benchmark)
         if not benchmark_path.exists():
-            print(f"Error: Benchmark file not found: {args.benchmark}", file=sys.stderr)
+            print(
+                f"Error: Benchmark file not found: {args.benchmark}",
+                file=sys.stderr,
+            )
             sys.exit(1)
 
     # Auto-detect format from output filename if not explicitly set

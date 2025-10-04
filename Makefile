@@ -22,14 +22,14 @@ test:
 	pytest --cov=lean_tearsheet --cov-report=term-missing --cov-report=html
 
 lint:
-	black --check src/ tests/
-	flake8 src/ tests/
-	isort --check-only --profile black src/ tests/
+	black --check --line-length 79 src/ tests/
+	flake8 --max-line-length 79 --extend-ignore=E203 src/ tests/
+	isort --check-only --profile black --line-length 79 src/ tests/
 	mypy src/
 
 format:
-	black src/ tests/
-	isort --profile black src/ tests/
+	black --line-length 79 src/ tests/
+	isort --profile black --line-length 79 src/ tests/
 
 clean:
 	rm -rf build/
