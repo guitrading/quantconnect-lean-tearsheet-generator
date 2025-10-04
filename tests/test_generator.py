@@ -2,11 +2,12 @@
 
 import json
 import tempfile
-from pathlib import Path
 from datetime import datetime, timedelta
-import pytest
-import pandas as pd
+from pathlib import Path
+
 import numpy as np
+import pandas as pd
+import pytest
 
 from lean_tearsheet.generator import TearsheetGenerator
 
@@ -33,19 +34,11 @@ def mock_backtest_data():
         equity_series.append([ts, equity, equity * 1.001, equity * 0.999, equity])
 
     return {
-        'charts': {
-            'Strategy Equity': {
-                'series': {
-                    'Equity': {
-                        'values': equity_series
-                    }
-                }
-            }
+        "charts": {"Strategy Equity": {"series": {"Equity": {"values": equity_series}}}},
+        "algorithmConfiguration": {
+            "startDate": "2024-01-01T00:00:00",
+            "endDate": "2024-12-31T23:00:00",
         },
-        'algorithmConfiguration': {
-            'startDate': '2024-01-01T00:00:00',
-            'endDate': '2024-12-31T23:00:00'
-        }
     }
 
 
@@ -53,16 +46,16 @@ def mock_backtest_data():
 def mock_backtest_dir(mock_backtest_data):
     """Create temporary directory with mock backtest JSON."""
     with tempfile.TemporaryDirectory() as tmpdir:
-        json_path = Path(tmpdir) / '123456789.json'
-        with open(json_path, 'w') as f:
+        json_path = Path(tmpdir) / "123456789.json"
+        with open(json_path, "w") as f:
             json.dump(mock_backtest_data, f)
         yield tmpdir
 
 
 def test_generator_initialization():
     """Test TearsheetGenerator initialization."""
-    gen = TearsheetGenerator('/fake/path')
-    assert gen.backtest_dir == Path('/fake/path')
+    gen = TearsheetGenerator("/fake/path")
+    assert gen.backtest_dir == Path("/fake/path")
     assert gen.benchmark_data_path is None
 
 
@@ -71,9 +64,9 @@ def test_load_backtest(mock_backtest_dir):
     gen = TearsheetGenerator(mock_backtest_dir)
     data = gen.load_backtest()
 
-    assert 'charts' in data
-    assert 'Strategy Equity' in data['charts']
-    assert 'algorithmConfiguration' in data
+    assert "charts" in data
+    assert "Strategy Equity" in data["charts"]
+    assert "algorithmConfiguration" in data
 
 
 def test_extract_equity_curve(mock_backtest_dir):
@@ -83,7 +76,7 @@ def test_extract_equity_curve(mock_backtest_dir):
 
     assert isinstance(equity, pd.Series)
     assert len(equity) > 0
-    assert equity.index.dtype == 'datetime64[ns]'
+    assert equity.index.dtype == "datetime64[ns]"
 
 
 def test_get_returns(mock_backtest_dir):
@@ -105,19 +98,27 @@ def test_calculate_metrics(mock_backtest_dir):
 
     # Check all expected metrics exist
     expected_keys = [
-        'Total Return', 'Annual Return', 'Volatility', 'Sharpe Ratio',
-        'Sortino Ratio', 'Calmar Ratio', 'Max Drawdown', 'Win Rate',
-        'Total Trades', 'Winning Trades', 'Losing Trades'
+        "Total Return",
+        "Annual Return",
+        "Volatility",
+        "Sharpe Ratio",
+        "Sortino Ratio",
+        "Calmar Ratio",
+        "Max Drawdown",
+        "Win Rate",
+        "Total Trades",
+        "Winning Trades",
+        "Losing Trades",
     ]
 
     for key in expected_keys:
         assert key in metrics
 
     # Check metric types and reasonable ranges
-    assert isinstance(metrics['Total Return'], float)
-    assert isinstance(metrics['Sharpe Ratio'], float)
-    assert 0 <= metrics['Win Rate'] <= 1
-    assert metrics['Max Drawdown'] <= 0
+    assert isinstance(metrics["Total Return"], float)
+    assert isinstance(metrics["Sharpe Ratio"], float)
+    assert 0 <= metrics["Win Rate"] <= 1
+    assert metrics["Max Drawdown"] <= 0
 
 
 def test_get_drawdown_series(mock_backtest_dir):
@@ -156,6 +157,6 @@ def test_get_config(mock_backtest_dir):
     gen = TearsheetGenerator(mock_backtest_dir)
     config = gen.get_config()
 
-    assert 'startDate' in config
-    assert 'endDate' in config
-    assert config['startDate'] == '2024-01-01T00:00:00'
+    assert "startDate" in config
+    assert "endDate" in config
+    assert config["startDate"] == "2024-01-01T00:00:00"

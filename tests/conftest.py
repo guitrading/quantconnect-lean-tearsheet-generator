@@ -2,10 +2,11 @@
 
 import json
 import tempfile
-from pathlib import Path
 from datetime import datetime, timedelta
-import pytest
+from pathlib import Path
+
 import numpy as np
+import pytest
 
 
 @pytest.fixture
@@ -30,19 +31,11 @@ def mock_backtest_data():
         equity_series.append([ts, equity, equity * 1.001, equity * 0.999, equity])
 
     return {
-        'charts': {
-            'Strategy Equity': {
-                'series': {
-                    'Equity': {
-                        'values': equity_series
-                    }
-                }
-            }
+        "charts": {"Strategy Equity": {"series": {"Equity": {"values": equity_series}}}},
+        "algorithmConfiguration": {
+            "startDate": "2024-01-01T00:00:00",
+            "endDate": "2024-12-31T23:00:00",
         },
-        'algorithmConfiguration': {
-            'startDate': '2024-01-01T00:00:00',
-            'endDate': '2024-12-31T23:00:00'
-        }
     }
 
 
@@ -50,7 +43,7 @@ def mock_backtest_data():
 def mock_backtest_dir(mock_backtest_data):
     """Create temporary directory with mock backtest JSON."""
     with tempfile.TemporaryDirectory() as tmpdir:
-        json_path = Path(tmpdir) / '123456789.json'
-        with open(json_path, 'w') as f:
+        json_path = Path(tmpdir) / "123456789.json"
+        with open(json_path, "w") as f:
             json.dump(mock_backtest_data, f)
         yield tmpdir

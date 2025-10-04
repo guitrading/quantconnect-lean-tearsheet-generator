@@ -4,14 +4,14 @@ import argparse
 import sys
 from pathlib import Path
 
-from .generator import TearsheetGenerator
 from .formats import HTMLTearsheet, PDFTearsheet
+from .generator import TearsheetGenerator
 
 
 def main():
     """Main CLI entry point."""
     parser = argparse.ArgumentParser(
-        description='Generate professional tearsheets from QuantConnect LEAN backtest results',
+        description="Generate professional tearsheets from QuantConnect LEAN backtest results",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
@@ -24,41 +24,35 @@ Examples:
   # Include benchmark comparison
   lean-tearsheet /path/to/backtest -o tearsheet.html \\
     --benchmark /path/to/btcusdt_trade.zip
-        """
+        """,
     )
 
     parser.add_argument(
-        'backtest_dir',
+        "backtest_dir", type=str, help="Path to LEAN backtest directory containing JSON results"
+    )
+
+    parser.add_argument(
+        "-o",
+        "--output",
         type=str,
-        help='Path to LEAN backtest directory containing JSON results'
+        default="tearsheet.html",
+        help="Output filename (default: tearsheet.html)",
     )
 
     parser.add_argument(
-        '-o', '--output',
+        "-f",
+        "--format",
         type=str,
-        default='tearsheet.html',
-        help='Output filename (default: tearsheet.html)'
+        choices=["html", "pdf"],
+        default="html",
+        help="Output format (default: html)",
     )
 
     parser.add_argument(
-        '-f', '--format',
-        type=str,
-        choices=['html', 'pdf'],
-        default='html',
-        help='Output format (default: html)'
+        "-b", "--benchmark", type=str, help="Path to benchmark data file (e.g., btcusdt_trade.zip)"
     )
 
-    parser.add_argument(
-        '-b', '--benchmark',
-        type=str,
-        help='Path to benchmark data file (e.g., btcusdt_trade.zip)'
-    )
-
-    parser.add_argument(
-        '-v', '--version',
-        action='version',
-        version='%(prog)s 0.1.0'
-    )
+    parser.add_argument("-v", "--version", action="version", version="%(prog)s 0.1.0")
 
     args = parser.parse_args()
 
@@ -80,10 +74,10 @@ Examples:
             sys.exit(1)
 
     # Auto-detect format from output filename if not explicitly set
-    if args.format == 'html' and args.output.endswith('.pdf'):
-        args.format = 'pdf'
-    elif args.format == 'pdf' and args.output.endswith('.html'):
-        args.format = 'html'
+    if args.format == "html" and args.output.endswith(".pdf"):
+        args.format = "pdf"
+    elif args.format == "pdf" and args.output.endswith(".html"):
+        args.format = "html"
 
     try:
         # Initialize generator
@@ -91,7 +85,7 @@ Examples:
         generator = TearsheetGenerator(args.backtest_dir, args.benchmark)
 
         # Generate tearsheet
-        if args.format == 'html':
+        if args.format == "html":
             html_gen = HTMLTearsheet(generator)
             html_gen.generate(args.output)
         else:
@@ -103,5 +97,5 @@ Examples:
         sys.exit(1)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

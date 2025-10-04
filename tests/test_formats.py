@@ -2,10 +2,11 @@
 
 import tempfile
 from pathlib import Path
+
 import pytest
 
-from lean_tearsheet.generator import TearsheetGenerator
 from lean_tearsheet.formats import HTMLTearsheet, PDFTearsheet
+from lean_tearsheet.generator import TearsheetGenerator
 
 
 @pytest.fixture
@@ -19,7 +20,7 @@ def test_html_tearsheet_generation(generator):
     html_gen = HTMLTearsheet(generator)
 
     with tempfile.TemporaryDirectory() as tmpdir:
-        output_file = Path(tmpdir) / 'test_tearsheet.html'
+        output_file = Path(tmpdir) / "test_tearsheet.html"
         html_gen.generate(str(output_file))
 
         assert output_file.exists()
@@ -27,8 +28,8 @@ def test_html_tearsheet_generation(generator):
 
         # Check HTML content
         content = output_file.read_text()
-        assert 'LEAN Strategy Tearsheet' in content
-        assert 'plotly' in content.lower()
+        assert "LEAN Strategy Tearsheet" in content
+        assert "plotly" in content.lower()
 
 
 def test_html_tearsheet_without_benchmark(generator):
@@ -36,7 +37,7 @@ def test_html_tearsheet_without_benchmark(generator):
     html_gen = HTMLTearsheet(generator)
 
     with tempfile.TemporaryDirectory() as tmpdir:
-        output_file = Path(tmpdir) / 'test_tearsheet.html'
+        output_file = Path(tmpdir) / "test_tearsheet.html"
         html_gen.generate(str(output_file))
 
         assert output_file.exists()
@@ -47,7 +48,7 @@ def test_pdf_tearsheet_generation(generator):
     pdf_gen = PDFTearsheet(generator)
 
     with tempfile.TemporaryDirectory() as tmpdir:
-        output_file = Path(tmpdir) / 'test_tearsheet.pdf'
+        output_file = Path(tmpdir) / "test_tearsheet.pdf"
 
         try:
             pdf_gen.generate(str(output_file))
@@ -63,13 +64,13 @@ def test_html_metrics_table_formatting(generator):
     html_gen = HTMLTearsheet(generator)
 
     with tempfile.TemporaryDirectory() as tmpdir:
-        output_file = Path(tmpdir) / 'test_tearsheet.html'
+        output_file = Path(tmpdir) / "test_tearsheet.html"
         html_gen.generate(str(output_file))
 
         content = output_file.read_text()
 
         # Check for key metrics in output
-        assert 'Total Return' in content
-        assert 'Sharpe Ratio' in content
-        assert 'Max Drawdown' in content
-        assert '%' in content  # Percentage formatting
+        assert "Total Return" in content
+        assert "Sharpe Ratio" in content
+        assert "Max Drawdown" in content
+        assert "%" in content  # Percentage formatting

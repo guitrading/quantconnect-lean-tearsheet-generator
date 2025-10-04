@@ -2,9 +2,10 @@
 
 import json
 from pathlib import Path
-from typing import Dict, Any, Optional
-import pandas as pd
+from typing import Any, Dict, Optional
+
 import numpy as np
+import pandas as pd
 
 
 class TearsheetGenerator:
@@ -30,13 +31,11 @@ class TearsheetGenerator:
         if self._backtest_data is not None:
             return self._backtest_data
 
-        json_files = list(self.backtest_dir.glob('[0-9]*.json'))
+        json_files = list(self.backtest_dir.glob("[0-9]*.json"))
         if not json_files:
-            raise FileNotFoundError(
-                f"No backtest results JSON found in {self.backtest_dir}"
-            )
+            raise FileNotFoundError(f"No backtest results JSON found in {self.backtest_dir}")
 
-        with open(json_files[0], 'r') as f:
+        with open(json_files[0], "r") as f:
             self._backtest_data = json.load(f)
 
         return self._backtest_data
@@ -47,12 +46,12 @@ class TearsheetGenerator:
             return self._equity_curve
 
         backtest_data = self.load_backtest()
-        equity_values = backtest_data['charts']['Strategy Equity']['series']['Equity']['values']
+        equity_values = backtest_data["charts"]["Strategy Equity"]["series"]["Equity"]["values"]
 
-        df = pd.DataFrame(equity_values, columns=['timestamp', 'open', 'high', 'low', 'close'])
-        df['date'] = pd.to_datetime(df['timestamp'], unit='s')
+        df = pd.DataFrame(equity_values, columns=["timestamp", "open", "high", "low", "close"])
+        df["date"] = pd.to_datetime(df["timestamp"], unit="s")
 
-        self._equity_curve = pd.Series(df['close'].values, index=df['date'])
+        self._equity_curve = pd.Series(df["close"].values, index=df["date"])
         return self._equity_curve
 
     def get_returns(self) -> pd.Series:
@@ -80,31 +79,31 @@ class TearsheetGenerator:
 
         import zipfile
 
-        with zipfile.ZipFile(self.benchmark_data_path, 'r') as zip_file:
-            csv_name = [f for f in zip_file.namelist() if f.endswith('.csv')][0]
+        with zipfile.ZipFile(self.benchmark_data_path, "r") as zip_file:
+            csv_name = [f for f in zip_file.namelist() if f.endswith(".csv")][0]
             with zip_file.open(csv_name) as csv_file:
                 df = pd.read_csv(
                     csv_file,
-                    names=['datetime', 'open', 'high', 'low', 'close', 'volume'],
-                    parse_dates=['datetime'],
-                    date_format='%Y%m%d %H:%M'
+                    names=["datetime", "open", "high", "low", "close", "volume"],
+                    parse_dates=["datetime"],
+                    date_format="%Y%m%d %H:%M",
                 )
 
-        df.set_index('datetime', inplace=True)
+        df.set_index("datetime", inplace=True)
         start = pd.to_datetime(start_date).tz_localize(None)
         end = pd.to_datetime(end_date).tz_localize(None)
         df = df[(df.index >= start) & (df.index <= end)]
 
-        return df['close']
+        return df["close"]
 
     def get_benchmark_returns(self) -> Optional[pd.Series]:
         """Get benchmark returns aligned with strategy returns."""
         if self._benchmark_returns is not None:
             return self._benchmark_returns
 
-        config = self.load_backtest().get('algorithmConfiguration', {})
-        start_date = config.get('startDate', '')
-        end_date = config.get('endDate', '')
+        config = self.load_backtest().get("algorithmConfiguration", {})
+        start_date = config.get("startDate", "")
+        end_date = config.get("endDate", "")
 
         benchmark_prices = self.load_benchmark(start_date, end_date)
         if benchmark_prices is None:
@@ -114,7 +113,7 @@ class TearsheetGenerator:
         returns = self.get_returns()
 
         # Align benchmark with strategy returns
-        benchmark_returns = benchmark_returns.reindex(returns.index, method='ffill').dropna()
+        benchmark_returns = benchmark_returns.reindex(returns.index, method="ffill").dropna()
         self._benchmark_returns = benchmark_returns
 
         return self._benchmark_returns
@@ -160,17 +159,17 @@ class TearsheetGenerator:
         calmar = ann_return / abs(max_dd) if max_dd < 0 else 0
 
         return {
-            'Total Return': total_return,
-            'Annual Return': ann_return,
-            'Volatility': volatility,
-            'Sharpe Ratio': sharpe,
-            'Sortino Ratio': sortino,
-            'Calmar Ratio': calmar,
-            'Max Drawdown': max_dd,
-            'Win Rate': win_rate,
-            'Total Trades': wins + losses,
-            'Winning Trades': wins,
-            'Losing Trades': losses,
+            "Total Return": total_return,
+            "Annual Return": ann_return,
+            "Volatility": volatility,
+            "Sharpe Ratio": sharpe,
+            "Sortino Ratio": sortino,
+            "Calmar Ratio": calmar,
+            "Max Drawdown": max_dd,
+            "Win Rate": win_rate,
+            "Total Trades": wins + losses,
+            "Winning Trades": wins,
+            "Losing Trades": losses,
         }
 
     def get_drawdown_series(self, returns: pd.Series) -> pd.Series:
@@ -179,9 +178,7 @@ class TearsheetGenerator:
         running_max = cum_returns.expanding().max()
         return (cum_returns - running_max) / running_max
 
-    def get_rolling_sharpe(
-        self, returns: pd.Series, window: int = 30 * 24
-    ) -> pd.Series:
+    def get_rolling_sharpe(self, returns: pd.Series, window: int = 30 * 24) -> pd.Series:
         """
         Calculate rolling Sharpe ratio.
 
@@ -200,4 +197,4 @@ class TearsheetGenerator:
 
     def get_config(self) -> Dict[str, Any]:
         """Get algorithm configuration from backtest."""
-        return self.load_backtest().get('algorithmConfiguration', {})
+        return self.load_backtest().get("algorithmConfiguration", {})
